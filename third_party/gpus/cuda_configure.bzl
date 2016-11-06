@@ -29,6 +29,8 @@ _DEFAULT_CUDA_TOOLKIT_PATH = "/usr/local/cuda"
 _DEFAULT_CUDNN_INSTALL_PATH = "/usr/local/cuda"
 _DEFAULT_CUDA_COMPUTE_CAPABILITIES = ["3.5", "5.2"]
 
+# configure may change the following line to True
+WITH_CUDA_SUPPORT = False
 
 # TODO(dzc): Once these functions have been factored out of Bazel's
 # cc_configure.bzl, load them from @bazel_tools instead.
@@ -114,7 +116,9 @@ def _gcc_host_compiler_includes(repository_ctx, cc):
 
 
 def _enable_cuda(repository_ctx):
-  if "TF_NEED_CUDA" in repository_ctx.os.environ:
+  if WITH_CUDA_SUPPORT:
+    return True
+  elif "TF_NEED_CUDA" in repository_ctx.os.environ:
     enable_cuda = repository_ctx.os.environ["TF_NEED_CUDA"].strip()
     return enable_cuda == "1"
   return False

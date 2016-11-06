@@ -139,7 +139,14 @@ while [ "$TF_NEED_CUDA" == "" ]; do
   esac
 done
 
-export TF_NEED_CUDA
+if [ "$TF_NEED_CUDA" == "1" ]; then
+  # Update Bazel build configuration.
+  perl -pi -e "s,WITH_CUDA_SUPPORT = (False|True),WITH_CUDA_SUPPORT = True,s" third_party/gpus/cuda_configure.bzl
+else
+  # Update Bazel build configuration.
+  perl -pi -e "s,WITH_CUDA_SUPPORT = (False|True),WITH_CUDA_SUPPORT = False,s" third_party/gpus/cuda_configure.bzl
+fi
+
 export TF_NEED_SYCL
 if [[ "$TF_NEED_CUDA" == "0" ]] && [[ "$TF_NEED_OPENCL" == "0" ]]; then
   echo "Configuration finished"
